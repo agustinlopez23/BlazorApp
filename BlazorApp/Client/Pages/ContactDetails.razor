@@ -1,0 +1,58 @@
+﻿@page "/contactdetails"
+@page "/contactdetails/{id:int}"
+
+
+@inject IContactsService ContactsService
+@inject NavigationManager NavigationManager
+<h3>ContactDetails</h3>
+
+<EditForm Model="@contact">
+    <table class="table">
+        <tr>
+        <td> First Name: </td>
+        <td><input type="text" @bind="contact.FirstName"></input></td>
+        </tr>
+        <tr>
+            <td> Last Name: </td>
+            <td><input type="text" @bind="contact.LastName"></input></td>
+        </tr>
+        <tr>
+            <td> Phone: </td>
+            <td><input type="text" @bind="contact.Phone"></input></td>
+        </tr>
+        <tr>
+            <td> Address: </td>
+            <td><input type="text" @bind="contact.Address"></input></td>
+        </tr>
+        <tr >
+            <td colspan="2" style="text-align:center" >
+                <input type="submit" value="Save" @onclick="Save" class="btn btn-outline-success mt-2" />
+                <input type="button" value="Cancel" @onclick="Cancel" class="btn btn-outline-danger mt-2" />
+            </td>
+        </tr>
+    </table>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+    Contact contact = new Contact();
+
+    protected async Task Save()
+    {
+        await ContactsService.Save(contact);
+        NavigationManager.NavigateTo("/");
+    }
+    protected void Cancel()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (id > 0)
+        {
+            contact = await ContactsService.GetDetails(id);
+        }
+    }
+}
